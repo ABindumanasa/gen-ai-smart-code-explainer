@@ -1,6 +1,6 @@
 #  Gen AI Smart Code Explainer
 
-**Deployed Live:** 👉 https://gen-ai-code-explainer-bindu-manasa.streamlit.app/
+**Deployed Live:** 👉 https://gen-ai-smart-code-explainer-bindu-manasa.streamlit.app/
 
 ---
 
