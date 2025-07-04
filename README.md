@@ -1,4 +1,4 @@
-#  Gen AI Code Explainer
+#  Gen AI Smart Code Explainer
 
 **Deployed Live:** 👉 https://gen-ai-code-explainer-bindu-manasa.streamlit.app/
 
