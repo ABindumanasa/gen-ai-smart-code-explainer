@@ -30,20 +30,24 @@ st.markdown("""
         font-style: italic;
     }
     .code-container {
-        background-color: #f8f9fa;
+        background-color: #ffffff;
         border-left: 4px solid #2c3e50;
         padding: 1rem;
         border-radius: 5px;
         margin: 1rem 0;
         white-space: pre-wrap;
+        border: 1px solid #e0e0e0;
+        color: #2c3e50;
     }
     .explanation-container {
-        background-color: #e8f8f5;
+        background-color: #f8fff8;
         border-left: 4px solid #27ae60;
         padding: 1rem;
         border-radius: 5px;
         margin: 1rem 0;
         white-space: pre-wrap;
+        border: 1px solid #d4e6d4;
+        color: #2c3e50;
     }
     .stButton > button {
         background-color: #2c3e50;
@@ -59,12 +63,14 @@ st.markdown("""
         transform: translateY(-2px);
     }
     .stSelectbox > div > div {
-        background-color: #ecf0f1;
+        background-color: #ffffff;
         border: 1px solid #bdc3c7;
+        color: #2c3e50;
     }
     .stTextArea > div > div > textarea {
-        background-color: #ecf0f1;
+        background-color: #ffffff;
         border: 1px solid #bdc3c7;
+        color: #2c3e50;
     }
     .sidebar-header {
         background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
@@ -73,6 +79,14 @@ st.markdown("""
         border-radius: 5px;
         text-align: center;
         margin-bottom: 1rem;
+        font-weight: bold;
+    }
+    .stSidebar {
+        background-color: #fafafa;
+    }
+    .stSidebar .stSelectbox label {
+        color: #2c3e50;
+        font-weight: 500;
     }
 </style>
 """, unsafe_allow_html=True)
