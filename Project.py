@@ -5,8 +5,8 @@ from typing import Dict, Any
 
 # Page config
 st.set_page_config(
-    page_title="AI Code Explainer",
-    page_icon="🤖",
+    page_title="Smart Code Analyzer",
+    page_icon="💻",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -17,61 +17,79 @@ st.markdown("""
     .main-header {
         text-align: center;
         padding: 1rem 0;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
         color: white;
         border-radius: 10px;
         margin-bottom: 2rem;
     }
+    .author-name {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
     .code-container {
         background-color: #f8f9fa;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #2c3e50;
         padding: 1rem;
         border-radius: 5px;
         margin: 1rem 0;
         white-space: pre-wrap;
     }
     .explanation-container {
-        background-color: #e8f5e8;
-        border-left: 4px solid #28a745;
+        background-color: #e8f8f5;
+        border-left: 4px solid #27ae60;
         padding: 1rem;
         border-radius: 5px;
         margin: 1rem 0;
         white-space: pre-wrap;
     }
     .stButton > button {
-        background-color: #667eea;
+        background-color: #2c3e50;
         color: white;
         border: none;
         border-radius: 5px;
         padding: 0.5rem 1rem;
         font-weight: bold;
+        transition: all 0.3s ease;
     }
     .stButton > button:hover {
-        background-color: #5a67d8;
+        background-color: #34495e;
+        transform: translateY(-2px);
+    }
+    .stSelectbox > div > div {
+        background-color: #ecf0f1;
+        border: 1px solid #bdc3c7;
+    }
+    .stTextArea > div > div > textarea {
+        background-color: #ecf0f1;
+        border: 1px solid #bdc3c7;
+    }
+    .sidebar-header {
+        background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown('<div class="main-header"><h1>🤖 AI Code Explainer</h1><p>Understand any code snippet in plain English!</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header"><h1>Smart Code Analyzer</h1><p>Understand any code snippet in plain English!</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="author-name">by Bindu Manasa</div>', unsafe_allow_html=True)
 
 # Sidebar config
-st.sidebar.header("⚙️ Configuration")
+st.sidebar.markdown('<div class="sidebar-header"><h3>Configuration</h3></div>', unsafe_allow_html=True)
 
-# Load credentials from Streamlit secrets or fallback to manual input
+# Load credentials from Streamlit secrets (hidden from user interface)
 api_key = st.secrets.get("ibm", {}).get("api_key", "")
 project_id = st.secrets.get("ibm", {}).get("project_id", "")
+region = st.secrets.get("ibm", {}).get("region", "us-south")
 
-if api_key and project_id:
-    st.sidebar.success("✅ Credentials loaded from secrets")
-    # Hide sensitive information - only show that credentials are loaded
-else:
-    st.sidebar.warning("⚠️ Secrets not found, please enter manually")
-    api_key = st.sidebar.text_input("IBM API Key", type="password", help="Enter your IBM Cloud API key")
-    project_id = st.sidebar.text_input("Project ID", help="Enter your watsonx.ai project ID")
-
-region = st.sidebar.selectbox("Region", ["us-south", "eu-de", "eu-gb", "jp-tok"])
-
+# Only show model selection and preferences
 model_choice = st.sidebar.selectbox(
     "Select Model",
     [
@@ -124,7 +142,7 @@ console.log(evenNumbers);''',
 col1, col2 = st.columns([1,1])
 
 with col1:
-    st.header("📝 Code Input")
+    st.header("Code Input")
     sample_choice = st.selectbox("Choose a sample or enter custom code:", list(sample_codes.keys()))
 
     if sample_choice == "Custom":
@@ -218,11 +236,21 @@ def explain_code_with_watsonx(code: str, language: str, detail_level: str,
 
 # Continue with column 2
 with col2:
-    st.header("🤖 AI Explanation")
+    st.header("AI Explanation")
     
-    if st.button("🔍 Explain Code", disabled=not code_input or not api_key or not project_id):
+    # Show status based on credentials
+    if api_key and project_id:
+        status_message = "Ready to analyze code"
+        button_disabled = not code_input
+    else:
+        status_message = "Please configure API credentials in secrets"
+        button_disabled = True
+    
+    st.info(status_message)
+    
+    if st.button("Analyze Code", disabled=button_disabled):
         if code_input.strip():
-            with st.spinner("🤖 AI is analyzing your code..."):
+            with st.spinner("AI is analyzing your code..."):
                 explanation = explain_code_with_watsonx(
                     code_input, 
                     programming_language, 
@@ -242,18 +270,18 @@ with col2:
                     'timestamp': time.strftime("%Y-%m-%d %H:%M:%S")
                 })
         else:
-            st.warning("⚠️ Please enter some code to explain!")
+            st.warning("Please enter some code to explain!")
     
     # Display current explanation
     if st.session_state.explanation_history:
         latest = st.session_state.explanation_history[-1]
         st.markdown('<div class="explanation-container">', unsafe_allow_html=True)
-        st.markdown("**🤖 AI Explanation:**")
+        st.markdown("**AI Explanation:**")
         st.write(latest['explanation'])
         st.markdown('</div>', unsafe_allow_html=True)
         
         # Download explanation
-        if st.button("📥 Download Explanation"):
+        if st.button("Download Explanation"):
             explanation_text = f"""Code Explanation
 =================
 Language: {latest['language']}
@@ -275,7 +303,7 @@ Explanation:
 
 # Explanation History Section
 if st.session_state.explanation_history:
-    st.header("📚 Explanation History")
+    st.header("Explanation History")
     
     for i, item in enumerate(reversed(st.session_state.explanation_history)):
         with st.expander(f"Explanation {len(st.session_state.explanation_history) - i} - {item['language']} ({item['timestamp']})"):
@@ -290,16 +318,16 @@ if st.session_state.explanation_history:
                 st.markdown(f"<div class='explanation-container'>{item['explanation']}</div>", unsafe_allow_html=True)
     
     # Clear history button
-    if st.button("🗑️ Clear History"):
+    if st.button("Clear History"):
         st.session_state.explanation_history = []
         st.rerun()
 
 # Footer
 st.markdown("---")
-st.markdown("🤖 **AI Code Explainer** | Powered by IBM watsonx.ai | Built with Streamlit")
+st.markdown("**Smart Code Analyzer** | Powered by IBM watsonx.ai | Built with Streamlit")
 
 # Tips section
-with st.expander("💡 Tips for Better Explanations"):
+with st.expander("Tips for Better Explanations"):
     st.markdown("""
     - **Be specific about the programming language** for more accurate explanations
     - **Choose the right detail level**: 
@@ -311,9 +339,9 @@ with st.expander("💡 Tips for Better Explanations"):
     """)
 
 # About section
-with st.expander("ℹ️ About"):
+with st.expander("About"):
     st.markdown("""
-    This AI Code Explainer uses IBM watsonx.ai to provide intelligent code explanations.
+    This Smart Code Analyzer uses IBM watsonx.ai to provide intelligent code explanations.
     Simply paste your code, select your preferences, and get clear explanations in plain English.
     
     **Features:**
@@ -321,10 +349,8 @@ with st.expander("ℹ️ About"):
     - Adjustable explanation detail levels
     - Various AI models to choose from
     - Explanation history and download functionality
-    - Beautiful, responsive interface
+    - Clean, responsive interface
     
     **Setup:**
-    1. Get your IBM Cloud API key and watsonx.ai project ID
-    2. Either add them to Streamlit secrets or enter them in the sidebar
-    3. Start explaining code!
+    Configure your IBM Cloud API key and watsonx.ai project ID in Streamlit secrets to get started.
     """)
